@@ -1,0 +1,30 @@
+[project]
+name = "my-project"
+version = "0.1.0"
+description = "TODO: one line on what this project does."
+requires-python = ">=3.12"
+dependencies = [
+    # Reads .env into the environment, so keys never live in code.
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# Only the code folder is the package; data/, output/, docs/, tests/ are not.
+[tool.setuptools.packages.find]
+include = ["my_project*"]
+
+[tool.ruff]
+line-length = 100

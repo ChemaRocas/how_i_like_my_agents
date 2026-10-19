@@ -1,0 +1,29 @@
+# Secrets: real keys live in .env, which is never committed. .env.example is.
+.env
+.env.*
+!.env.example
+
+# Everything a run produces or downloads. Can contain personal or customer data.
+output/
+
+# Personal sandbox: experiments, one-off files, backups. Never committed.
+scratch/
+
+# Python environment and build/test leftovers
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Agent files that are personal or temporary
+.claude/settings.local.json
+.claude/worktrees/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
