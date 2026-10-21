@@ -14,6 +14,11 @@ dev = [
     "pytest-cov>=5.0",
 ]
 
+# Short commands for the processes you run often, installed into .venv/bin/. Uncomment and
+# adapt when a module has a main() worth running by name, e.g. `.venv/bin/my-report`.
+# [project.scripts]
+# my-report = "my_project.report:main"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
@@ -25,6 +30,3 @@ build-backend = "setuptools.build_meta"
 # Only the code folder is the package; data/, output/, docs/, tests/ are not.
 [tool.setuptools.packages.find]
 include = ["my_project*"]
-
-[tool.ruff]
-line-length = 100

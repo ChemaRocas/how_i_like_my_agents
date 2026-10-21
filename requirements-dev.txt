@@ -1,0 +1,3 @@
+# Only needed to run this repo's own tests (tests/). The scripts themselves use nothing
+# beyond Python's standard library.
+pytest>=8.0

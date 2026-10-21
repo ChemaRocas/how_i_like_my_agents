@@ -35,6 +35,16 @@ def test_private_folders_and_secrets_are_git_ignored(entry):
     assert entry in gitignore_lines()
 
 
+@pytest.mark.parametrize("entry", [
+    "credentials.json", "service-account*.json", "*.pem", "*.key", "id_rsa", ".aws/",
+    "*.sql", "*.sqlite", "*.db", "*.dump", "*.ipynb",
+])
+def test_key_files_dumps_and_notebooks_are_git_ignored(entry):
+    """Keys, database dumps and notebooks (whose saved outputs can embed data) leak the
+    most when committed by accident, wherever they land in the project."""
+    assert entry in gitignore_lines()
+
+
 def test_env_example_stays_committed():
     """.env.* is ignored, so .env.example needs its own exception or it never reaches git."""
     assert "!.env.example" in gitignore_lines()

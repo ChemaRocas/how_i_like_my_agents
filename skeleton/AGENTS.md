@@ -76,6 +76,7 @@ my_project/          the code: one module per step, each runnable on its own
 data/                committed inputs
 docs/                runbooks: how to run and maintain each process
 tests/               pytest suite
+skills/              project-specific skills for agents (optional)
 output/              run results (git-ignored)
 scratch/             sandbox (git-ignored)
 .claude/             Claude Code settings: git restrictions + helper agents
@@ -93,6 +94,11 @@ TODO: list each module with a one-line description as it's added.
 **How the code is written** (module docstrings with sections, banners, one-line
 function docstrings, why-comments, logging vs print, language) is in
 [CODING_STYLE.md](CODING_STYLE.md), with examples. Read it before writing code here.
+
+**Skills.** Project-specific skills live in [skills/](skills/) (see its README). My global
+`gitignore-audit` skill must run whenever `.gitignore` is created or changed, before
+reporting the work as done; if it isn't available in your tool, follow its steps from my
+global setup.
 
 **Module docstrings explain *why*, not *what*.** Record what you learn the hard way: an
 API quirk, why a filter is written a certain way, why a value is a constant. Read the
@@ -117,7 +123,8 @@ TODO: add project-specific conventions (language of the domain terms, encodings,
 
 ## Tests
 
-`pytest`, using only `tmp_path` and `monkeypatch` for fixtures. The suite must stay fast
+`pytest`, with no fixture or mocking libraries: pytest's own `tmp_path` and `monkeypatch`,
+plus your own fixtures in `tests/conftest.py`, are all you need. The suite must stay fast
 (seconds) and must never touch the network.
 
 **Test where bugs are silent:** parsing, rendering, filtering, validation, retries and
@@ -138,7 +145,19 @@ put the reasoning in the docstring when the assertion encodes a real decision.
 `tests/test_repo_layout.py` guards the structure itself (folders, ignored paths, no
 hardcoded paths). Keep it passing.
 
+## Cost and production risk
+
+TODO: list what can cost money or damage shared data in this project, one entry per
+hazard: what it is, the date it was found, what happened (with the numbers), and what now
+protects against it. Keep the history even after a protection is removed, so nobody adds
+it back without knowing why it went. The patterns to protect with (dry run, resume, locks,
+refusing instead of guessing, a test mode) are in CODING_STYLE.md, rule 11.
+
 ## When a change is done
+
+When you propose a change, list in your plan the tests and docs you expect to update. My
+go covers them. If you discover another doc or test that needs changing, say so and wait
+for a go before touching it.
 
 A change isn't finished when the code works. Before reporting it, in this order:
 
@@ -146,8 +165,9 @@ A change isn't finished when the code works. Before reporting it, in this order:
    validator or renderer, a new case covers the change.
 2. **Docs, as the last step:** update every document that describes what you changed,
    so nobody (me, another agent, future you) acts on outdated instructions:
-   - the runbook in `docs/` for each process you changed (create one if it's a new
-     process): what changed for the person running it, and why;
+   - the runbook in `docs/` for each process you changed (a new process gets a new
+     runbook, copied from `docs/RUNBOOK_TEMPLATE.md`): what changed for the person running
+     it, and why, with a dated line in its History;
    - `README.md` and the Commands section above, if a command, option or setup step
      changed;
    - the Layout and Conventions sections above, if the structure or a rule changed;

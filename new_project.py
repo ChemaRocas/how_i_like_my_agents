@@ -17,14 +17,19 @@ Run it with:
 """
 
 import argparse
+import importlib.util
+import json
 import keyword
 import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
-SKELETON = Path(__file__).resolve().parent / "skeleton"
+TEMPLATE_REPO = Path(__file__).resolve().parent
+SKELETON = TEMPLATE_REPO / "skeleton"
+PERSONAL_REPOS_GUIDE = TEMPLATE_REPO / "global" / "general_instructions" / "personal-repos.md"
 
 # The placeholders the skeleton uses, in the three spellings Python projects need.
 PLACEHOLDER_PACKAGE = "my_project"    # code folder and imports
@@ -60,6 +65,81 @@ def package_name(name):
     if not package or package[0].isdigit() or keyword.iskeyword(package) or not package.isidentifier():
         return None
     return package
+
+
+def name_conflict(package):
+    """Why this package name would break the new project, or None if it's safe.
+
+    Checked before anything is created, so a bad name never leaves a half-made folder.
+    """
+    # The skeleton's own top-level folders and files (data, tests, docs...) plus the
+    # git-ignored folders created later: the code folder would collide with one of them,
+    # and output/ or scratch/ would also be ignored by git.
+    reserved = {path.name.split(".")[0] for path in SKELETON.iterdir()} | set(GITIGNORED_FOLDERS)
+    if package in reserved:
+        return f"'{package}' is already a folder or file in every project"
+    # The libraries every project installs (pytest, python-dotenv...), by their names in
+    # the skeleton's pyproject.toml: they aren't necessarily installed here yet.
+    if package in skeleton_dependency_names():
+        return f"'{package}' is the name of a library every project installs, so imports would clash"
+    # A name Python already knows (the standard library, or a library installed here,
+    # like dotenv or pytest) would shadow it: imports would load the wrong code.
+    if package in sys.stdlib_module_names or importlib.util.find_spec(package) is not None:
+        return f"'{package}' is the name of an existing Python module, so imports would clash"
+    return None
+
+
+def skeleton_dependency_specs():
+    """Every dependency in the skeleton's pyproject.toml, as written there ("pytest>=8.0")."""
+    with open(SKELETON / "pyproject.toml", "rb") as f:
+        project = tomllib.load(f)["project"]
+    return project.get("dependencies", []) + [
+        spec for group in project.get("optional-dependencies", {}).values() for spec in group
+    ]
+
+
+def python_name(distribution):
+    """A library's name the way it would appear as a folder name ("pytest-cov" -> "pytest_cov")."""
+    return re.split(r"[\s<>=!~;\[]", distribution, maxsplit=1)[0].lower().replace("-", "_").replace(".", "_")
+
+
+def skeleton_dependency_names():
+    """The skeleton's direct dependencies, by Python name. Works offline."""
+    return {python_name(spec) for spec in skeleton_dependency_specs()}
+
+
+def installed_library_names():
+    """Every library a new project's .venv will contain, hidden dependencies included.
+
+    Asks pip what it would install (nothing is installed). A project named like one of
+    these (say `iniconfig`, which pytest needs) would replace it and break the tools.
+    Returns None when pip can't answer (offline), so the caller can say it couldn't check.
+    """
+    result = subprocess.run(
+        [sys.executable, "-m", "pip", "install", "--dry-run", "--ignore-installed", "--quiet",
+         "--report", "-", *skeleton_dependency_specs()],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        return None
+    try:
+        report = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return None
+    return {python_name(item["metadata"]["name"]) for item in report.get("install", [])}
+
+
+def required_python():
+    """(major, minor) from the skeleton's requires-python, e.g. ">=3.12" -> (3, 12)."""
+    with open(SKELETON / "pyproject.toml", "rb") as f:
+        spec = tomllib.load(f)["project"]["requires-python"]
+    match = re.search(r">=\s*(\d+)\.(\d+)", spec)
+    return (int(match.group(1)), int(match.group(2))) if match else None
+
+
+def inside(path, folder):
+    """True if path is folder itself or anywhere inside it."""
+    return path == folder or folder in path.parents
 
 
 def ask(prompt, default=None):
@@ -130,24 +210,59 @@ def main():
     args = parse_args()
     print("=== New project ===\n")
 
+    # The project's tools need this Python; checked first so the failure isn't a
+    # confusing pip error halfway through.
+    needed = required_python()
+    if needed and sys.version_info[:2] < needed:
+        sys.exit(f"New projects need Python {needed[0]}.{needed[1]} or newer; this is "
+                 f"{sys.version_info[0]}.{sys.version_info[1]}. Install a newer Python "
+                 "and run this script with it. Nothing was changed.")
+
     name = args.name or ask("Project name (e.g. sales_report)")
     package = package_name(name)
     if package is None:
         sys.exit(f"'{name}' can't be a Python project name: use letters first, then letters, "
                  "digits or underscores (e.g. sales_report_2026).")
-    dest = clean_path(args.dest) if args.dest else (
-        Path.cwd() if args.name else clean_path(ask("Create it in which folder", str(Path.cwd())))
-    )
-    project = dest.resolve() / package
+    conflict = name_conflict(package)
+    if conflict:
+        sys.exit(f"{conflict}. Pick another name; nothing was changed.")
+    if not args.no_install:
+        libraries = installed_library_names()
+        if libraries is None:
+            print("  (couldn't ask pip which libraries get installed; continuing, the tests will tell)")
+        elif package in libraries:
+            sys.exit(f"'{package}' is the name of a library every project installs, so imports "
+                     "would clash. Pick another name; nothing was changed.")
+
+    # Never inside this template repo: the project would end up in its git history.
+    # Run from inside it, the default is the folder that contains it.
+    default_dest = TEMPLATE_REPO.parent if inside(Path.cwd().resolve(), TEMPLATE_REPO) else Path.cwd()
+    if args.dest:
+        dest = clean_path(args.dest)
+    elif args.name:
+        dest = default_dest
+    else:
+        dest = clean_path(ask("Create it in which folder", str(default_dest)))
+    dest = dest.resolve()
+    if inside(dest, TEMPLATE_REPO):
+        sys.exit(f"{dest} is inside the template repo; pick a folder outside {TEMPLATE_REPO}. "
+                 "Nothing was changed.")
+    project = dest / package
     if project.exists():
         sys.exit(f"{project} already exists. Pick another name or folder; nothing was changed.")
     title = package.replace("_", " ").title()
 
     print(f"\nCreating {project}")
-    shutil.copytree(SKELETON, project, ignore=COPY_IGNORE)
-    replace_placeholders(project, package, title)
-    for folder in GITIGNORED_FOLDERS:
-        (project / folder).mkdir()
+    try:
+        shutil.copytree(SKELETON, project, ignore=COPY_IGNORE)
+        replace_placeholders(project, package, title)
+        for folder in GITIGNORED_FOLDERS:
+            (project / folder).mkdir()
+    except Exception as exc:
+        # The folder didn't exist before this run, so removing it loses nothing and
+        # leaves no half-made project behind.
+        shutil.rmtree(project, ignore_errors=True)
+        sys.exit(f"Could not create the project ({exc}). Nothing was left behind.")
     print(f"  copied the skeleton; code folder is {package}/")
 
     problems = []
@@ -159,6 +274,16 @@ def main():
         elif not run("installing the project and test tools",
                      [str(venv_python(project)), "-m", "pip", "install", "-e", ".[dev]"], project):
             problems.append("installing failed (are you online?)")
+        # Last line of defence for name clashes: a library installed only inside the new
+        # .venv (a dependency of a dependency) can't be seen by the checks done earlier.
+        elif not run("checking no installed library uses the same name",
+                     [str(venv_python(project)), "-c",
+                      "import importlib.metadata as m, sys; "
+                      f"owners = m.packages_distributions().get({package!r}, []); "
+                      f"sys.exit(1 if [o for o in owners if o.lower().replace('-', '_') != {package!r}] else 0)"],
+                     project):
+            problems.append(f"'{package}' clashes with a library installed in the .venv: "
+                            "delete this project and pick another name")
         elif not run("running the tests", [str(venv_python(project)), "-m", "pytest"], project):
             problems.append("some tests failed: check the output above")
 
@@ -181,7 +306,7 @@ Next:
   3. The first time an agent works here, it should set up its own command rules from
      AGENT_PERMISSIONS.md (it will ask you first).
   4. If this is a personal repo, set it up as described in
-     global/general_instructions/personal-repos.md.
+     {PERSONAL_REPOS_GUIDE}
 
 Project folder: {project}""")
 

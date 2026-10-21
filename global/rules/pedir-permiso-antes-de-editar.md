@@ -5,8 +5,7 @@ authorization". Discussing a plan, or agreeing an approach is good, is not permi
 
 - Read-only work needs no permission: reading, searching, running tests, measuring, profiling.
 - Anything that writes (my repos, Drive, Sheets, databases, exports, generated outputs)
-  waits for a go. That includes "obvious" follow-ups like doc or test updates that go with
-  an approved change.
+  waits for a go.
 - One go covers the change that was described. A new idea mid-implementation needs its own go.
 - End a proposal by asking for authorization outright, rather than trailing off into editing.
 

@@ -1,6 +1,8 @@
 # Python leftovers from running or testing the scripts
 __pycache__/
 *.pyc
+.venv/
+.pytest_cache/
 
 # OS / editor noise
 .DS_Store

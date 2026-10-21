@@ -3,13 +3,40 @@
     "deny": [
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git rm:*)",
       "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(git mv:*)",
       "Bash(git reset:*)",
       "Bash(git checkout:*)",
+      "Bash(git switch:*)",
       "Bash(git restore:*)",
-      "Bash(git clean -f:*)",
-      "Bash(git clean -x:*)"
+      "Bash(git clean:*)",
+      "Bash(git stash:*)",
+      "Bash(git rebase:*)",
+      "Bash(git merge:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git revert:*)",
+      "Bash(git tag:*)",
+      "Bash(git branch -d:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git branch --delete:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh repo create:*)",
+      "Bash(gh repo delete:*)",
+      "Bash(gh release create:*)"
+    ],
+    "ask": [
+      "Bash(git config:*)"
+    ],
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(.venv/bin/python -m pytest:*)",
+      "Bash(.venv/bin/python -m py_compile:*)"
     ]
   }
 }

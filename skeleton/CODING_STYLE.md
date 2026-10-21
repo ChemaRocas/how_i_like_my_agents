@@ -37,6 +37,20 @@ single function.
    language (a column called `factura`, a status called `pendiente`): don't translate them.
 9. **Never print or log a key**, not even partly. Read keys with `paths.require_env()`.
 10. **Locations come from `paths.py`**: never build a path from `__file__` or hardcode one.
+11. **Cost and production risk.** Use each of these where it applies, not everywhere:
+    - **`--dry-run`** for anything that spends money (paid APIs) or writes to shared
+      systems (a shared drive, a database, a production spreadsheet): it does everything
+      except the expensive or irreversible part, and says what it would have done.
+    - **`--resume`** (optional) only for runs that take long (more than ~5 minutes) and can
+      die halfway, for example on a lost connection: it continues from where the run
+      stopped instead of starting over or paying twice. Don't add it to short runs.
+    - **A lock** (a second copy of the same process is refused, not queued) only for long
+      pipelines, where two copies at once would overwrite each other's state.
+    - **Refuse instead of guessing:** when an input is ambiguous or a check fails before
+      spending or writing, stop with a clear message rather than picking a default.
+    - **A test mode that can never write to production:** if the project has a way to try
+      things on real inputs, its results go to a separate place, and the production
+      writers refuse to run in that mode.
 
 ## Example 1: how a module opens
 
