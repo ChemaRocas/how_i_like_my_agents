@@ -11,11 +11,12 @@ Nothing here belongs to an employer: no company names, data, keys or internal pr
 global/                       my instructions for every agent, on every project
   rules/                      how to work with me: pacing, one step at a time, stop and
                               ask, ask before editing, no commit reminders, derive don't
-                              hardcode, show me the edits, how to ask me questions
+                              hardcode, show me the edits, how to ask me questions, SQL style
   general_instructions/       how to talk to me and how I set things up: acronyms,
                               yes-man protocol, plan before building, personal repos
   skills/                     procedures agents load when needed: gitignore-audit (runs
-                              whenever a .gitignore changes, or when I ask)
+                              whenever a .gitignore changes, or when I ask) and
+                              check-docs-contradictions (only when I ask)
   install.py                  installs all of the above for each agent on this computer
   HOW_TO_WRITE_A_RULE.md      where a new rule goes, its shape, and how it becomes global
 skeleton/                     the starting point for every new project

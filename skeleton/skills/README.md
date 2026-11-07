@@ -24,9 +24,30 @@ whatever shape fits it. Some things that have worked well:
   so nobody "corrects" them.
 - **Examples** of a correct result, when the output has a precise form.
 
-## Making a skill available to your agent
+## Registering a skill, so agents actually find it
 
-Agents look for skills in their own folders (for example `.claude/skills/` or
-`.agents/skills/`). Keep the source here and, the first time you need one, tell me which
-agent folder it should also go in, and wait for my authorization before linking or copying
-it there.
+A skill in this folder is **invisible to agents** until it's registered where they look:
+an agent doesn't browse `skills/` on its own. (Learned the hard way: a session answered a
+data question by guessing, because the skill that explained the data sat in an
+unregistered folder.)
+
+Register each skill with a link from each agent's project skills folder to the skill's
+folder here, so there is still only one copy to edit:
+
+| Agent | Link | Points to |
+|---|---|---|
+| Claude Code | `.claude/skills/<skill-name>` | `../../skills/<skill-name>` |
+| Codex | `.agents/skills/<skill-name>` | `../../skills/<skill-name>` |
+
+Check the agent's current documentation for its project skills folder before linking:
+these locations change (if one moves, update the table above: the tests read it). Creating
+a link can't go through the file editor, so tell me which links you'll create and wait for
+my authorization. Also list the skill in the Read this first table in
+[AGENTS.md](../AGENTS.md), for the task it serves.
+
+`tests/test_skills_registered.py` fails if a skill here isn't linked for every agent in the
+table, or if a link points to a skill that no longer exists.
+
+**On Windows,** git may turn links into small text files unless the computer allows them
+(Developer Mode on, and `git config core.symlinks true` before cloning). If the test fails
+there right after cloning, that's the reason, not a missing registration.

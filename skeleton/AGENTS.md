@@ -6,6 +6,56 @@ Humans: [README.md](README.md) is the entry point; runbooks live in [docs/](docs
 Sections marked TODO are filled in as the project takes shape. Keep the rest: it's the
 structure every one of my projects follows.
 
+## Read this first
+
+This file loads automatically; nothing else in the repo does. Before proposing, running or
+querying anything, read what the task needs: a session that skips the docs ends up
+guessing at things that are written down.
+
+**Every session, whatever the task:** [README.md](README.md) (what the project is, the
+commands) and [my_project/paths.py](my_project/paths.py) (where every file lives).
+
+**Then, for the task at hand:**
+
+| Task | Read first |
+|---|---|
+| TODO: one row per kind of task (a pipeline, a data question, a report) | TODO: the files to read, as links with their full path |
+| Anything that costs money or writes to shared systems | *Cost and production risk* below |
+
+**How to read:**
+
+- **Code and documentation** (the `.py`, `.md`, `.sql` files that are part of the repo):
+  read them **whole**, not by searching for a keyword; a search only finds what you
+  already knew to look for. If a file is over 150 KB, tell me first and read it whole only
+  if I say so.
+- **Data and generated files** (anything under `output/`, exports, downloaded files): search
+  them or read a few lines. Over 50 KB, read one whole only if I say so. They can contain
+  personal or customer data: open them only when the task needs them.
+- **When two documents disagree, trust in this order:** the code (and its module
+  docstrings), then this file, then the project's skills, then other READMEs, then
+  `docs/`. Tell me which document you overrode and why.
+- Don't search `.claude/worktrees/` or similar folders: they are other sessions' copies of
+  the repo, possibly stale.
+
+**Keeping the docs true:**
+
+- **Link every reference by its full path from the repo root.** When a doc names another
+  file, write it as a link (`[my_project/paths.py](my_project/paths.py)`), never "the
+  README". Every doc should be reachable by following links from this file.
+  `tests/test_doc_links.py` fails on a link to a file that doesn't exist.
+- **Check the doc against the code you read.** When a task has you read a doc and the code
+  it describes, check they agree. If they don't, tell me in your report; the code wins
+  meanwhile. Don't go hunting through docs you had no reason to read.
+- **After renaming or removing something** (a file, module, command, step or constant),
+  search the `.md` files for the old name and fix what you find, or report it.
+- **Date decisions, and label history as history.** Write "decided 2026-11-05" or "until
+  2026-09-10 …", not a bare "always". A document kept only for the record says so in its
+  first line.
+- **Every command is listed.** Each command in `pyproject.toml` (`[project.scripts]`)
+  appears in the Commands section below; `tests/test_doc_links.py` checks it.
+- For a full check of the docs against the code, I can ask for my global
+  `check-docs-contradictions` skill.
+
 ## What this is
 
 TODO: one paragraph. What the project does, for whom, where its inputs come from and
@@ -153,6 +203,10 @@ protects against it. Keep the history even after a protection is removed, so nob
 it back without knowing why it went. The patterns to protect with (dry run, resume, locks,
 refusing instead of guessing, a test mode) are in CODING_STYLE.md, rule 11.
 
+**Agents run only the dry run.** To check that something which spends money or writes
+production results works, run its `--dry-run` (or equivalent). Run the real thing only
+when I ask for it in that conversation.
+
 ## When a change is done
 
 When you propose a change, list in your plan the tests and docs you expect to update. My
@@ -171,7 +225,10 @@ A change isn't finished when the code works. Before reporting it, in this order:
    - `README.md` and the Commands section above, if a command, option or setup step
      changed;
    - the Layout and Conventions sections above, if the structure or a rule changed;
-   - the module docstring, if the reasoning behind the code changed.
+   - the module docstring, if the reasoning behind the code changed;
+   - the setup instructions, if the change adds or alters a key, a manual step or a
+     machine-specific setting: someone else must be able to set it up on their own
+     computer by following them, unaided. Flag anything that only works on my machine.
 3. **Report:** say which docs you updated, or why none needed it.
 
 Examples of docs updates that were done well:
