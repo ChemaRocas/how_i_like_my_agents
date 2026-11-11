@@ -15,8 +15,10 @@ global/                       my instructions for every agent, on every project
   general_instructions/       how to talk to me and how I set things up: acronyms,
                               yes-man protocol, plan before building, personal repos
   skills/                     procedures agents load when needed: gitignore-audit (runs
-                              whenever a .gitignore changes, or when I ask) and
-                              check-docs-contradictions (only when I ask)
+                              whenever a .gitignore changes, or when I ask),
+                              check-docs-contradictions (only when I ask) and
+                              presentation-slide-deck-helper (whenever I ask for a
+                              presentation or slide deck)
   install.py                  installs all of the above for each agent on this computer
   HOW_TO_WRITE_A_RULE.md      where a new rule goes, its shape, and how it becomes global
 skeleton/                     the starting point for every new project
