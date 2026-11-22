@@ -7,7 +7,7 @@ file is the source), and wait for my authorization.
 
 - The active GitHub account always stays the work one. Never switch it.
 - Commits use my GitHub private email, never a work email, set for that repo only:
-  `git config --local user.name "Josemaria Rocas"`
+  `git config --local user.name "ChemaRocas"`
   `git config --local user.email "94923549+ChemaRocas@users.noreply.github.com"`
 - The repo gets its own setting so it always pushes and pulls as ChemaRocas, whatever
   account is active:
