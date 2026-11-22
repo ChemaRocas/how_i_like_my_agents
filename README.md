@@ -13,9 +13,11 @@ global/                       my instructions for every agent, on every project
                               ask, ask before editing, no commit reminders, derive don't
                               hardcode, show me the edits, how to ask me questions, SQL style,
                               write conditions positively
-  general_instructions/       how to talk to me and how I set things up: acronyms,
-                              yes-man protocol, plan before building, personal repos,
-                              side sessions are independent
+  general_instructions/       who I am and how to talk to me, and how I set things up:
+                              about me, acronyms, yes-man protocol, plan before building,
+                              personal repos, side sessions are independent
+  local_templates/            templates for one computer or one job, filled in and kept
+                              outside this repo (not installed): what I'm working on now
   skills/                     procedures agents load when needed: gitignore-audit (runs
                               whenever a .gitignore changes, or when I ask),
                               check-docs-contradictions (only when I ask) and
@@ -120,6 +122,12 @@ never go in this repo. Put them by hand in:
   files alone.
 - **Codex:** below the line `<!-- local: kept by install.py -->` at the end of
   `~/.codex/AGENTS.md`. Everything below it survives every install.
+
+At each new job, or when my personal projects change, I can fill in
+[global/local_templates/working-on-now.md](global/local_templates/working-on-now.md) and put
+it in those places, as its [README](global/local_templates/README.md) explains: it tells
+every session what I'm working on (a job, personal projects, or both), alongside the
+generic `about-me.md`. It's optional: without it, sessions get only the generic profile.
 
 To support another agent, add a function to `install.py` that writes the same files where
 that agent looks for global instructions, the way `claude_files()` and `codex_files()` do.
