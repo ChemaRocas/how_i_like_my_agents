@@ -38,8 +38,9 @@ single function.
 9. **Never print or log a key**, not even partly. Read keys with `paths.require_env()`.
 10. **Locations come from `paths.py`**: never build a path from `__file__` or hardcode one.
 11. **Cost and production risk.** Use each of these where it applies, not everywhere:
-    - **`--dry-run`** for anything that spends money (paid APIs) or writes to shared
-      systems (a shared drive, a database, a production spreadsheet): it does everything
+    - **`--dry-run`** for anything that spends money (paid APIs), writes to shared
+      systems (a shared drive, a database, a production spreadsheet) or sends messages to
+      people (an email, a chat message): it does everything
       except the expensive or irreversible part, and says what it would have done. It's
       also what an agent runs to check the process works; the real run waits for my ask.
     - **`--resume`** (optional) only for runs that take long (more than ~5 minutes) and can

@@ -11,9 +11,11 @@ Nothing here belongs to an employer: no company names, data, keys or internal pr
 global/                       my instructions for every agent, on every project
   rules/                      how to work with me: pacing, one step at a time, stop and
                               ask, ask before editing, no commit reminders, derive don't
-                              hardcode, show me the edits, how to ask me questions, SQL style
+                              hardcode, show me the edits, how to ask me questions, SQL style,
+                              write conditions positively
   general_instructions/       how to talk to me and how I set things up: acronyms,
-                              yes-man protocol, plan before building, personal repos
+                              yes-man protocol, plan before building, personal repos,
+                              side sessions are independent
   skills/                     procedures agents load when needed: gitignore-audit (runs
                               whenever a .gitignore changes, or when I ask),
                               check-docs-contradictions (only when I ask) and

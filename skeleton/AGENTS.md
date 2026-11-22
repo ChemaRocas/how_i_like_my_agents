@@ -20,7 +20,7 @@ commands) and [my_project/paths.py](my_project/paths.py) (where every file lives
 | Task | Read first |
 |---|---|
 | TODO: one row per kind of task (a pipeline, a data question, a report) | TODO: the files to read, as links with their full path |
-| Anything that costs money or writes to shared systems | *Cost and production risk* below |
+| Anything that costs money, writes to shared systems or sends messages to people | *Cost and production risk* below |
 
 **How to read:**
 
@@ -203,9 +203,10 @@ protects against it. Keep the history even after a protection is removed, so nob
 it back without knowing why it went. The patterns to protect with (dry run, resume, locks,
 refusing instead of guessing, a test mode) are in CODING_STYLE.md, rule 11.
 
-**Agents run only the dry run.** To check that something which spends money or writes
-production results works, run its `--dry-run` (or equivalent). Run the real thing only
-when I ask for it in that conversation.
+**Agents run only the dry run.** To check that something which spends money, writes
+production results or sends messages to people (an email, a chat message) works, run its
+`--dry-run` (or equivalent, such as a mode that only builds the message). Run the real
+thing only when I ask for it in that conversation.
 
 ## When a change is done
 
