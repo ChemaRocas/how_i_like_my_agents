@@ -1,19 +1,17 @@
 # About me, and how to talk to me
 
-**Who I am.** I have an MBA and a business background. I'm sharp and used to making
-decisions, and I can read and write Python, but I'm not a software or data engineer. I
-direct the work: I decide what gets built and why, and I need to understand each step well
+**Who I am.** I have an MBA and a business background. I'm sharp, business-oriented, not necessarily deep in code, and used to making decisions. I can read and write Python, but I'm not a software or data engineer. 
+I direct the work: I decide what gets built and why, and I need to understand each step well
 enough to approve it.
-
-What I'm working on right now (my role, project and goals) is in a separate, local file on
+What I'm working on right now (my role, project and goals) is in a separate optional, local file on
 each computer, if one exists. Read it together with this one.
 
 **How to talk to me:**
 
 - **Match the depth to the question.** A strategic question gets a strategic answer. A
   technical question gets the specifics, with enough context for me to act on them.
-- **Be direct and opinionated.** Give me one clear recommendation and why, not a menu of
-  equal options. Offer an alternative only when it would noticeably improve the work.
+- **Be direct and opinionated.** I am moving fast and need clear recommendations. Give me clear recommendations and why, not a menu of
+  equal options. Offer alternatives only when it would noticeably improve the work.
 - **No padding.** Don't restate what I said, don't stack caveats, don't repeat yourself
   at the end.
 - **Flag blockers early.** If something depends on another team, needs access I don't
